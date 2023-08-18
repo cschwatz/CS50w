@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Search</title>
+        <link rel="stylesheet" href="advanced_styles.css">
+    </head>
+    <body>
+        <header class="navigationBar">
+            <div><a href="images.html">Home</a></div>
+        </header>
+        <div class="title">
+            <p>
+                <span id="scuffedWord">scuffed</span>
+                <span class="blueLetter">G</span>
+                <span class="redLetter">o</span>
+                <span class="yellowLetter">o</span>
+                <span class="blueLetter">g</span>
+                <span class="greenLetter">l</span>
+                <span class="redLetter">e</span>
+                <span id="advancedSearch">Advanced search</span>
+            </p>
+        </div>
+        <div class="searchOptions">
+            <div id="form1">
+                <p>All these words:</p>
+                <form action="https://www.google.com/search">
+                    <input type="text" name="q" autocomplete="off">
+                </form>
+            </div>
+            <div id="form2">
+                <p>This expression or exact phrase:</p>
+                <form action="">
+                    <input type="text">
+                </form>
+            </div>
+            <div id="form3">
+                <p>Any of these words:</p>
+                <form action="">
+                    <input type="text">
+                </form>
+            </div>
+            <div id="form4">
+                <p>None of these words:</p>
+                <form action="">
+                    <input type="text">
+                </form>
+            </div>
+            <input type="submit" value="Google Search">
+        </div>
+        <footer class="footer">
+            Scuffed Google is provided to you by github.com/cschwatz via CS50w
+        </footer>
+    </body>
+</html>

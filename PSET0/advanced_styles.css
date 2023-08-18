@@ -1,0 +1,83 @@
+html {
+    margin: 0px;
+    padding: 0px;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.title p {
+    display: flex;
+    align-items: flex-start;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.title p > :first-child {
+    text-decoration: line-through;
+    rotate: -35deg;
+    margin-right: -35px;
+    margin-top: 15px;
+    color: firebrick;
+}
+
+.title p > :nth-child(n+2) {
+   font-size: 100px;
+   font-weight: bold;
+   margin: -2px; 
+}
+
+.title p > :last-child {
+    font-size: 16px;
+    font-weight: normal;
+    color: rgb(66,133,244);
+    align-self: flex-end;
+}
+
+.searchOptions{
+    margin: 0px;
+}
+
+#form1, #form2, #form3, #form4{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#form1 p, #form2 p, #form3 p, #form4 p{
+    margin: 0px;
+}
+
+input[type=submit]{
+    width: 100px;
+}
+
+.blueLetter {
+    color: rgb(66,133,244);
+}
+
+.redLetter {
+    color: rgb(234,67,53);
+}
+
+.yellowLetter {
+    color: rgb(251,230,5);
+}
+
+.greenLetter {
+    color: rgb(52,168,83);
+}
+
+.footer {
+    padding: 10px;
+    display: flex;
+    justify-content: start;
+    margin-top: auto;
+    flex-wrap: wrap;
+    border-top: 1px solid rgb(220,220,220);
+    background-color: rgb(245,245,245);
+}
