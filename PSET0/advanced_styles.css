@@ -129,9 +129,10 @@ input[type=submit]{
 }
 
 input[type=submit]:hover{
-    border: 1px solid rgb(215,215,215);
-    box-shadow: 0px 1px rgba(180,180,180,0.5);
+    /* border: 1px solid rgb(215,215,215); */
+    /* box-shadow: 0px 1px rgba(180,180,180,0.5); */
     cursor: pointer;
+    background-color: rgb(53, 126, 243);
 }
 
 .blueLetter{
