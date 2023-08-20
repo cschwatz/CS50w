@@ -126,8 +126,6 @@ input[type=submit]{
     border: none;
     height: 30px;
     background-color: rgb(66,133,244);
-    width: 120px;
-    align-self: flex-end;
 }
 
 input[type=submit]:hover{
