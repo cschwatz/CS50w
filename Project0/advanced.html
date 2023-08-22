@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Search</title>
+        <link rel="stylesheet" href="advanced_styles.css">
+    </head>
+    <body>
+        <header class="navigationBar">
+            <div class="title">
+                <p>
+                    <span id="scuffedWord">scuffed</span>
+                    <span class="blueLetter">G</span>
+                    <span class="redLetter">o</span>
+                    <span class="yellowLetter">o</span>
+                    <span class="blueLetter">g</span>
+                    <span class="greenLetter">l</span>
+                    <span class="redLetter">e</span>
+                </p>
+            </div>
+            <div id="homeLink"><a href="index.html">Home</a></div>
+        </header>
+        <div id="advancedSearchText">
+            <span id="advancedSearch">Advanced search</span>
+        </div>
+        <div class="searchOptions">
+            <div>
+                <p id="searchOptionsText">Locate pages with...</p>
+            </div>
+            <form action="https://www.google.com/search">
+                <div id="form1">
+                    <p>
+                        <span>All these words:</span>
+                    </p>
+                    <input type="text" name="as_q" autocomplete="off">
+                </div>
+                <div id="form2">
+                    <p>
+                        <span>This expression or exact phrase:</span>
+                    </p>
+                    <input type="text" name="as_epq" autocomplete="off">
+                </div>
+                <div id="form3">
+                    <p>
+                        <span>Any of these words:</span>
+                    </p>
+                    <input type="text" name="as_oq">
+                </div>
+                <div id="form4">
+                    <p>
+                        <span>None of these words:</span>
+                    </p>
+                    <input type="text" name="as_eq">
+                </div>
+                <div id="button">
+                    <p></p>
+                    <div id="buttonDiv">
+                    <input type="submit" value="Advanced Search">
+                    </div>    
+                </div>    
+            </form>
+        </div>
+        <footer class="footer">
+            Scuffed Google is provided to you by github.com/cschwatz via CS50w
+        </footer>
+    </body>
+</html>
