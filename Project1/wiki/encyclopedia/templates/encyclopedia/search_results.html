@@ -1,0 +1,14 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Search results
+{% endblock %}
+
+{% block body %}
+<p>{{ number }}</p>
+    <ul>
+        {% for result in matching_articles %}
+            <a href="{% url result|lower %}">{{ result }}</a>
+        {% endfor %}
+    </ul>
+{% endblock %}
