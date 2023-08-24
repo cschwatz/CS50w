@@ -9,7 +9,7 @@
 
     <ul>
         {% for entry in entries %}
-            <a href="{% url entry|lower %}">{{ entry }}</a>
+            <a href="{% url 'page' page_name=entry|lower %}">{{ entry }}</a>
         {% endfor %}
     </ul>
 

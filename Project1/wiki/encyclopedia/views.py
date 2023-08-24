@@ -1,46 +1,16 @@
 from random import randint
 from django.shortcuts import render
+from django import forms
+
+class newArticleForm(forms.Form):
+    title = forms.CharField(widget=forms.TextInput(attrs={'name':'title'}))
+    content = forms.CharField(widget=forms.Textarea(attrs={"name":"content", "rows":1, "cols":1}))
 
 from . import util
 def index(request):
     random_article = util.list_entries()[randint(0, len(util.list_entries()) - 1)]
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries(),
-        "random_article": random_article,
-    })
-
-def css(request):
-    random_article = util.list_entries()[randint(0, len(util.list_entries()) - 1)]
-    return render(request, "encyclopedia/css.html", {
-        "entry": util.get_entry("CSS"),
-        "random_article": random_article,
-    })
-
-def django(request):
-    random_article = util.list_entries()[randint(0, len(util.list_entries()) - 1)]
-    return render(request, "encyclopedia/django.html", {
-        "entry": util.get_entry("Django"),
-        "random_article": random_article,
-    })
-
-def git(request):
-    random_article = util.list_entries()[randint(0, len(util.list_entries()) - 1)]
-    return render(request, "encyclopedia/git.html", {
-        "entry": util.get_entry("Git"),
-        "random_article": random_article,
-    })
-
-def html(request):
-    random_article = util.list_entries()[randint(0, len(util.list_entries()) - 1)]
-    return render(request, "encyclopedia/html.html", {
-        "entry": util.get_entry("HTML"),
-        "random_article": random_article,
-    })
-
-def python(request):
-    random_article = util.list_entries()[randint(0, len(util.list_entries()) - 1)]
-    return render(request, "encyclopedia/python.html", {
-        "entry": util.get_entry("Python"),
         "random_article": random_article,
     })
 
@@ -67,6 +37,37 @@ def page(request, page_name):
             "entry": util.get_entry(entry_name),
             "random_article": random_article,
         })
+
+def new_page(request):
+    random_article = util.list_entries()[randint(0, len(util.list_entries()) - 1)]
+
+    if request.method == "POST":
+        form = newArticleForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            if (title not in util.list_entries()):
+                content = form.cleaned_data["content"]
+                util.save_entry(title, content)
+                return render(request, "encyclopedia/new_page.html", {
+                    "form": form,
+                    "random_article": random_article,
+                })
+            else:
+                return render(request, "encyclopedia/new_page.html", {
+                    "form": form,
+                    "random_article": random_article,
+                })
+        else:
+            print('here')
+            return render(request, "encyclopedia/new_page.html", {
+                "form": form,
+                "random_article": random_article,
+            })
+    
+    return render(request, "encyclopedia/new_page.html", {
+        "form": newArticleForm(),
+        "random_article": random_article,
+    })
 
 def search_results(request):
     random_article = util.list_entries()[randint(0, len(util.list_entries()) - 1)]

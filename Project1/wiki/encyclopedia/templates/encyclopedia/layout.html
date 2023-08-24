@@ -20,11 +20,11 @@
                     <a href="{% url 'index' %}">Home</a>
                 </div>
                 <div>
-                    Create New Page
+                    <a href="{% url 'new_page' %}">Create New Page</a>
                 </div>
                 <div>
-                    <a href="{% url random_article|lower %}">Random page</a>
-                </div>
+                    <a href="{% url 'page' page_name=random_article|lower %}">Random page</a>
+                </div>10
                 {% block nav %}
                 {% endblock %}
             </div>
