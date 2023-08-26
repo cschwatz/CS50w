@@ -1,9 +1,9 @@
 {% extends "encyclopedia/layout.html" %}
 
 {% block title %}
-    Django
+    Title
 {% endblock %}
-
 {% block body %}
-    {{ entry }}
+    {{ content|safe }}
+    <a href="{% url 'edit_page' article_name=page_name %}">Edit page</a>
 {% endblock %}

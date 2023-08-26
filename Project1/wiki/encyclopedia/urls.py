@@ -9,4 +9,5 @@ urlpatterns = [
     path("search_results", views.search_results, name="search_results"),
     path("new_page", views.new_page, name="new_page"),
     path("<str:page_name>", views.page, name="page"),
+    path("edit_page/<str:article_name>", views.edit_page, name="edit_page"),
 ]

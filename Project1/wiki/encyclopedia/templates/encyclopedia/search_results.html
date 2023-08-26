@@ -8,7 +8,7 @@
 <p>{{ number }}</p>
     <ul>
         {% for result in matching_articles %}
-            <a href="{% url result|lower %}">{{ result }}</a>
+            <a href="{% url 'page' page_name=result|lower %}">{{ result }}</a>
         {% endfor %}
     </ul>
 {% endblock %}

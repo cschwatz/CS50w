@@ -5,9 +5,16 @@
 {% endblock %}
 
 {% block body %}
+    
     <form action="{% url 'new_page' %}" method="post">
         {{ form }}
         {% csrf_token %}
         <input type="submit" value="Save page">
     </form>
+    {% if has_article%}
+    <p>
+        The chosen title is already in the database, please choose another title.
+    </p>
+    {% endif %}
+    
 {% endblock %}
