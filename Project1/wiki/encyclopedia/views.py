@@ -33,13 +33,13 @@ def page(request, page_name):
     entry_name = next((entry for entry in util.list_entries() if entry.lower() == page_name), None)
     #checks if the name entered at the url directly corresponds to any article that is in 'entries'
     #if article does not exist, renders the 'notfound' page
-    entry_html = markdown2.markdown(util.get_entry(entry_name))
     if not util.get_entry(entry_name):
         return render(request, "encyclopedia/notfound.html", {
             "page_name": page_name,
             "random_article": random_article,
         })
     else: #if found an article, render that page's article
+        entry_html = markdown2.markdown(util.get_entry(entry_name))
         return render(request, "encyclopedia/page.html", {
             "entry": util.get_entry(entry_name),
             "random_article": random_article,
@@ -54,7 +54,7 @@ def new_page(request):
         has_article = False
         form = newArticleForm(request.POST)
         if form.is_valid():
-            title = form.cleaned_data["title"]
+            title = form.cleaned_data["title"].lower()
             if (title not in util.list_entries()):
                 content = form.cleaned_data["content"]
                 util.save_entry(title, content)
@@ -102,11 +102,15 @@ def search_results(request):
     if request.method == "POST":
         page_name = request.POST.get('q')
         entry_name = next((entry for entry in util.list_entries() if entry.lower() == page_name), None)
+        found_article = False
         if not util.get_entry(entry_name):
             matching_results = [article for article in util.list_entries() if page_name in article.lower()]
+            if matching_results:
+                found_article = True
             return render(request, "encyclopedia/search_results.html", {
                 "matching_articles": matching_results,
                 "random_article": random_article,
+                "found_article": found_article,
             })
         else: #if found an article, render that page's article
             return HttpResponseRedirect(reverse("page", kwargs={"page_name": page_name}))

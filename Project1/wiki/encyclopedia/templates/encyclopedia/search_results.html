@@ -10,5 +10,10 @@
         {% for result in matching_articles %}
             <a href="{% url 'page' page_name=result|lower %}">{{ result }}</a>
         {% endfor %}
+        {% if not found_article %}
+                <p>
+                    No articles were found.
+                </p>
+        {% endif %}
     </ul>
 {% endblock %}
