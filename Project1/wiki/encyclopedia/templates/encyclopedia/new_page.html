@@ -6,7 +6,7 @@
 
 {% block body %}
     
-    <form action="{% url 'new_page' %}" method="post">
+    <form class="new_article_form" action="{% url 'new_page' %}" method="post">
         {{ form }}
         {% csrf_token %}
         <input type="submit" value="Save page">

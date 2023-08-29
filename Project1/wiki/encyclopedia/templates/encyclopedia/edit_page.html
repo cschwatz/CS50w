@@ -5,9 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    
-    <h1>{{ title }}</h1>
-    <form method="post">
+    <form class="edit_page_form" method="post">
         {% csrf_token %}
         {{ content }}
         <input type="submit" name="edited_article" value="Save page">

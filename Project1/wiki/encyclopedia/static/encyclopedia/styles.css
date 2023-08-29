@@ -36,3 +36,36 @@ textarea {
 .sidebar h2 {
     margin-top: 5px;
 }
+
+.new_article_form {
+    display: flex;
+    flex-direction: column;
+}
+
+#id_title {
+    width: 80%;
+    margin-bottom: 15px;
+}
+
+.new_article_form input[type=submit] {
+    width: 100px;
+    align-self: flex-end;
+    margin-top: 15px;
+    margin-right: 215px;
+}
+
+.edit_page_form {
+    display: flex;
+    flex-direction: column;
+}
+
+.edit_page_form input[type=submit] {
+    width: 100px;
+    align-self: flex-end;
+    margin-top: 15px;
+    margin-right: 215px;
+}
+
+label {
+    font-size: 30px;
+}
