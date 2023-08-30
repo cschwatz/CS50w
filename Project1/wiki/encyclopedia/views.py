@@ -55,7 +55,8 @@ def new_page(request):
         form = newArticleForm(request.POST)
         if form.is_valid():
             title = form.cleaned_data["title"].lower()
-            if (title not in util.list_entries()):
+            entry_name = next((entry for entry in util.list_entries() if entry.lower() == title), None)
+            if not entry_name:
                 content = form.cleaned_data["content"]
                 util.save_entry(title, content)
                 return HttpResponseRedirect(reverse("page", kwargs={"page_name": title}))
