@@ -1,0 +1,10 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+    <h3>listing</h3>
+    {{ listing_to_view.title }}
+    {{ listing_to_view.description }}
+    {{ listing_to_view.category }}
+    <img class="auction_image" src="{{ listing_to_view.image }}" alt=""> 
+    {{ listing_to_view.date }} 
+    {{ listing_to_view.value }}
+{% endblock %}

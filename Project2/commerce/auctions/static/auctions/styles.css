@@ -1,0 +1,15 @@
+body {
+    padding: 10px;
+}
+
+.auction_image {
+    width: 100px;
+}
+
+.underline {
+    width: 100%;
+    height: 5px;
+    border: solid;
+    border-bottom: 1px;
+    border-color: black;
+}

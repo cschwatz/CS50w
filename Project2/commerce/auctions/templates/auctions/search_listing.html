@@ -1,0 +1,14 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <form action="search_listing" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button>Search</button>
+    </form>
+    <!-- {% for matching in matching_listings %}
+        {{ matching }}
+    {% endfor %} -->
+    <p>test</p>
+    {{ test }}
+{% endblock %}
