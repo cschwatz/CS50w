@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from django import forms
 
 from .models import User, AuctionListing
@@ -18,6 +19,9 @@ class newListingForm(forms.Form):
 class searchListingForm(forms.Form):
     choices = [('EL', 'electronic'), ('TO', 'toys'), ('HM', 'home'), ('FS', 'fashion'), ('OT', 'other')]
     category_to_search = forms.ChoiceField(choices=choices)
+
+class checkUserForm(forms.Form):
+    pass
 
 def index(request):
     active_auctions = AuctionListing.objects.all()
@@ -81,6 +85,7 @@ def listing(request, listing_title):
         "listing_to_view": listing_to_view,
     })
 
+@login_required
 def create_listing(request):
     is_post = False
     if request.method == "POST":
@@ -92,7 +97,8 @@ def create_listing(request):
             category = form.cleaned_data['category']
             description = form.cleaned_data['description']
             initial_price = form.cleaned_data['initial_price']
-            listing = AuctionListing(title=title, description=description, category=category, image=image_url, value=initial_price)
+            user = User.objects.get(username=request.user.username)
+            listing = AuctionListing(user=user, title=title, description=description, category=category, image=image_url, value=initial_price)
             listing.save()
             return HttpResponseRedirect(reverse("listing", kwargs={"listing_title": title}))
 
@@ -105,14 +111,17 @@ def search_listing(request):
     if request.method == "POST":
         form = searchListingForm(request.POST)
         if form.is_valid():
-            test = form.cleaned_data['category']
-            # matching_listings = AuctionListing.objects.get(category=form.cleaned_data['category'])
+            test = form.cleaned_data['category_to_search']
+            matching_listings = AuctionListing.objects.filter(category=form.cleaned_data['category_to_search'])
             return render(request, "auctions/search_listing.html", {
                 "form": searchListingForm(),
-                # "matching_listings": matching_listings,
+                "matching_listings": matching_listings,
                 "test": test,
             })
 
     return render(request, "auctions/search_listing.html", {
         "form": searchListingForm(),
     })
+
+def bid(request, listing_title):
+    pass

@@ -3,6 +3,7 @@
 {% block body %}
     <h2>Active Listings</h2>
     {% for auction in active_auctions %}
+        {{ auction.user }}
         {{ auction.title }} 
         {{ auction.description }} 
         {{ auction.category }} 

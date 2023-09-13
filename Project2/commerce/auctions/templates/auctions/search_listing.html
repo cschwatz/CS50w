@@ -6,9 +6,13 @@
         {{ form }}
         <button>Search</button>
     </form>
-    <!-- {% for matching in matching_listings %}
-        {{ matching }}
-    {% endfor %} -->
-    <p>test</p>
-    {{ test }}
+    {% for matching in matching_listings %}
+    {{ matching.title }} 
+    {{ matching.description }} 
+    <img class="auction_image" src="{{ matching.image }}" alt=""> 
+    {{ matching.category }} 
+    {{ matching.date }}
+    <hr>
+    <br>
+    {% endfor %}
 {% endblock %}
