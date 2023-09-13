@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+    {% if is_post == False %}
+    {{ listing.user }}
+    {{ listing.title }}
+    {{ listing.description }}
+    {{ listing.category }}
+    <img class="auction_image" src="{{ listing.image }}" alt=""> 
+    {{ listing.date }} 
+    {{ listing.value }}
+    {% endif %}
+    <form action="{% url 'bid' listing.title %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button>Bid!</button>
+    </form>
+    {% if is_post == True %}
+        {{ current_bid }}
+        {{ listing_user }}
+    {% endif %}
+{% endblock %}

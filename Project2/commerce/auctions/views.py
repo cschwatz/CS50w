@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django import forms
 
-from .models import User, AuctionListing
+from .models import User, AuctionListing, Bid, Comment
 
 class newListingForm(forms.Form):
     listing_name = forms.CharField(widget=forms.TextInput(attrs={'label': 'Listing name', 'initial':'Listing name'}))
@@ -20,8 +20,9 @@ class searchListingForm(forms.Form):
     choices = [('EL', 'electronic'), ('TO', 'toys'), ('HM', 'home'), ('FS', 'fashion'), ('OT', 'other')]
     category_to_search = forms.ChoiceField(choices=choices)
 
-class checkUserForm(forms.Form):
-    pass
+class bidForm(forms.Form):
+    value = forms.DecimalField(widget=forms.NumberInput(attrs={'label': 'Bid'}), min_value=0)
+
 
 def index(request):
     active_auctions = AuctionListing.objects.all()
@@ -123,5 +124,35 @@ def search_listing(request):
         "form": searchListingForm(),
     })
 
+@login_required
 def bid(request, listing_title):
-    pass
+    listing = AuctionListing.objects.get(title=listing_title)
+    form = bidForm()
+    is_post = False
+    if request.method == "POST":
+        is_post = True
+        form = bidForm(request.POST)
+        if form.is_valid():
+            new_bid = form.cleaned_data['value']
+            listing_user = listing.user
+            current_bid = Bid.objects.filter(user=listing_user)
+            if not current_bid:
+                current_bid = AuctionListing.objects.get(user=listing_user).value
+            else:
+                current_bid = current_bid.bid
+            if (new_bid > current_bid):
+                bid_to_save = Bid(user=request.user.username, listing=listing, bid=new_bid)
+                    # bid_to_save.save()
+                    # return HttpResponseRedirect(reverse("listing", kwargs={"listing_title": listing_title}))
+            return render(request, "auctions/bid.html", {
+                "is_post": is_post,
+                "form": form,
+                "listing": listing,
+                "current_bid": current_bid,
+                "listing_user": listing_user,
+            })
+    return render(request, "auctions/bid.html", {
+        "form": form,
+        "listing": listing,
+        "is_post": is_post,
+    })
