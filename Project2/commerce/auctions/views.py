@@ -31,7 +31,7 @@ def index(request):
     for listing in active_auctions:
         try: # see if there are bids for a given listing
             highest_bid = Bid.objects.filter(listing=listing)
-            highest_bid = highest_bid.order_by('bid')[0].bid
+            highest_bid = highest_bid.order_by('-bid')[0].bid
         except IndexError: #if there are no bids, the highest bid is the initial value
             highest_bid = listing.value
         listings_with_bid.append((listing, highest_bid))
@@ -97,9 +97,17 @@ def listing(request, listing_title):
         highest_bid = highest_bid.order_by('bid')[0].bid #order them from highest bid to lowest and fetches the first one (highest)
     except IndexError: #if there are no bids, it will throw an index error
         highest_bid = listing_to_view.value
+    user_can_bid = False
+    user_can_close_listing = False
+    if (listing_to_view.user.username != request.user.username): # check if logged user is not the user who created the current listing, since they shouldn't bid on their own listing
+        user_can_bid = True
+    else:
+        user_can_close_listing = True
     return render(request, "auctions/listing.html", {
         "listing_to_view": listing_to_view,
         "highest_bid": highest_bid,
+        "can_bid": user_can_bid,
+        "can_close": user_can_close_listing,
     })
 
 @login_required
@@ -156,29 +164,21 @@ def bid(request, listing_title):
     except IndexError: #if there are no bids, it will throw an index error
         highest_bid = listing.value
     form = bidForm()
-    is_post = False
 
     if request.method == "POST":
-        is_post = True
         form = bidForm(request.POST)
         if form.is_valid():
             new_bid = form.cleaned_data['value']
             listing_user = listing.user
-            current_bid = Bid.objects.filter(user=listing_user)
-            if not current_bid:
-                current_bid = AuctionListing.objects.get(user=listing_user).value
-            else:
-                current_bid = current_bid.bid
+            current_bid = highest_bid
             if new_bid <= current_bid:
                 bid_message = "Your bid must be greater than the current highest bid"
                 return render(request, "auctions/bid.html", {
-                    "is_post": is_post,
                     "form": form,
                     "listing": listing,
                     "current_bid": current_bid,
                     "listing_user": listing_user,
                     "error_message": bid_message,
-                    "test": "test",
                 })
             else:
                 bid_to_save = Bid(user=request.user, listing=listing, bid=new_bid)
@@ -188,6 +188,5 @@ def bid(request, listing_title):
         return render(request, "auctions/bid.html", {
             "form": form,
             "listing": listing,
-            "is_post": is_post,
             "highest_bid": highest_bid,
         })

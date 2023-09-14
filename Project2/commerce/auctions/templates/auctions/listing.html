@@ -7,5 +7,14 @@
     <img class="auction_image" src="{{ listing_to_view.image }}" alt=""> 
     {{ listing_to_view.date }} 
     {{ highest_bid }}
-    <a href="{% url 'bid' listing_to_view.title %}">Make a bid</a>
+    {% if user.is_authenticated %}
+        {% if can_close %}
+            {% if listing_to_view.is_active %}
+                <button>Close listing</button>
+            {% endif %}
+        {% endif %}
+        {% if can_bid %}
+            <a href="{% url 'bid' listing_to_view.title %}">Make a bid</a>
+        {% endif %}
+    {% endif %}
 {% endblock %}

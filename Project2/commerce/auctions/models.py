@@ -14,6 +14,7 @@ class AuctionListing(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     image = models.URLField()
     value = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
+    is_active = models.BooleanField(default=True)
 
 class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_bid", default=None)
