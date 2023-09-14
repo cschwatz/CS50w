@@ -94,7 +94,7 @@ def listing(request, listing_title):
     listing_to_view = AuctionListing.objects.get(title=listing_title)
     try:
         highest_bid = Bid.objects.filter(listing=listing_to_view) #gets all bids for the listing
-        highest_bid = highest_bid.order_by('bid')[0].bid #order them from highest bid to lowest and fetches the first one (highest)
+        highest_bid = highest_bid.order_by('-bid')[0].bid #order them from highest bid to lowest and fetches the first one (highest)
     except IndexError: #if there are no bids, it will throw an index error
         highest_bid = listing_to_view.value
     user_can_bid = False
@@ -142,7 +142,7 @@ def search_listing(request):
             for match in matching_listings:
                 try: # see if there are bids for a given listing
                     highest_bid = Bid.objects.filter(listing=match)
-                    highest_bid = highest_bid.order_by('bid')[0].bid
+                    highest_bid = highest_bid.order_by('-bid')[0].bid
                 except IndexError: #if there are no bids, the highest bid is the initial value
                     highest_bid = match.value
                 listings_with_bid.append((match, highest_bid))
