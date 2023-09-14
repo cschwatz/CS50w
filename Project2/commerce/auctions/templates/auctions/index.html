@@ -2,15 +2,15 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-    {% for auction in active_auctions %}
-        {{ auction.user }}
-        {{ auction.title }} 
-        {{ auction.description }} 
-        {{ auction.category }} 
-        {{ auction.date }}
-        <img class="auction_image" src="{{ auction.image }}" alt=""> 
-        {{ auction.value }} 
-        <a href="{% url 'listing' auction.title  %}">Go to listing</a>
+    {% for listing in listings %}
+        {{ listing.0.user }}
+        {{ listing.0.title }} 
+        {{ listing.0.description }} 
+        {{ listing.0.category }} 
+        {{ listing.0.date }}
+        {{ listing.1 }}
+        <img class="auction_image" src="{{ listing.0.image }}" alt=""> 
+        <a href="{% url 'listing' listing.0.title  %}">Go to listing</a>
         <hr>
     {% endfor %}
 {% endblock %}

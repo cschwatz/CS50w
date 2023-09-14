@@ -6,6 +6,6 @@
     {{ listing_to_view.category }}
     <img class="auction_image" src="{{ listing_to_view.image }}" alt=""> 
     {{ listing_to_view.date }} 
-    {{ listing_to_view.value }}
+    {{ highest_bid }}
     <a href="{% url 'bid' listing_to_view.title %}">Make a bid</a>
 {% endblock %}

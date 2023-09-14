@@ -6,12 +6,14 @@
         {{ form }}
         <button>Search</button>
     </form>
-    {% for matching in matching_listings %}
-    {{ matching.title }} 
-    {{ matching.description }} 
-    <img class="auction_image" src="{{ matching.image }}" alt=""> 
-    {{ matching.category }} 
-    {{ matching.date }}
+    {% for match in matches %}
+    {{ match.0.title }} 
+    {{ match.0.description }} 
+    <img class="auction_image" src="{{ match.0.image }}" alt=""> 
+    {{ match.0.category }} 
+    {{ match.0.date }}
+    {{ match.1 }}
+    <a href="{% url 'bid' match.0.title %}">Make a bid</a>
     <hr>
     <br>
     {% endfor %}

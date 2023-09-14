@@ -1,14 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.core.exceptions import ValidationError
-
-def bid_value_validator(value):
-    bids = Bid.objects.all()
-    bids_values = [value for value in bids.bid]
-    if (value <= max(bids_values)):
-        raise ValidationError(
-            f"the bid ${value} must be higher than the highest bid: ${max(bids_values)}"
-        )
 
 class User(AbstractUser):
     pass
@@ -27,7 +18,7 @@ class AuctionListing(models.Model):
 class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_bid", default=None)
     listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE, related_name="listing_bids")
-    bid = models.DecimalField(max_digits=8, decimal_places=2, default=0.00, validators=[bid_value_validator])
+    bid = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_comment", default=None)

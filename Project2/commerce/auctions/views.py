@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django import forms
 
@@ -25,9 +26,18 @@ class bidForm(forms.Form):
 
 
 def index(request):
-    active_auctions = AuctionListing.objects.all()
+    active_auctions = AuctionListing.objects.all() # get all active auctions (still have to work on the "active" aspect)
+    listings_with_bid = [] # list of tuples that have a listing and their respective highest bid
+    for listing in active_auctions:
+        try: # see if there are bids for a given listing
+            highest_bid = Bid.objects.filter(listing=listing)
+            highest_bid = highest_bid.order_by('bid')[0].bid
+        except IndexError: #if there are no bids, the highest bid is the initial value
+            highest_bid = listing.value
+        listings_with_bid.append((listing, highest_bid))
+    
     return render(request, "auctions/index.html", {
-        "active_auctions": active_auctions,
+        "listings": listings_with_bid,
     })
 
 def login_view(request):
@@ -82,8 +92,14 @@ def register(request):
 
 def listing(request, listing_title):
     listing_to_view = AuctionListing.objects.get(title=listing_title)
+    try:
+        highest_bid = Bid.objects.filter(listing=listing_to_view) #gets all bids for the listing
+        highest_bid = highest_bid.order_by('bid')[0].bid #order them from highest bid to lowest and fetches the first one (highest)
+    except IndexError: #if there are no bids, it will throw an index error
+        highest_bid = listing_to_view.value
     return render(request, "auctions/listing.html", {
         "listing_to_view": listing_to_view,
+        "highest_bid": highest_bid,
     })
 
 @login_required
@@ -114,10 +130,17 @@ def search_listing(request):
         if form.is_valid():
             test = form.cleaned_data['category_to_search']
             matching_listings = AuctionListing.objects.filter(category=form.cleaned_data['category_to_search'])
+            listings_with_bid = []
+            for match in matching_listings:
+                try: # see if there are bids for a given listing
+                    highest_bid = Bid.objects.filter(listing=match)
+                    highest_bid = highest_bid.order_by('bid')[0].bid
+                except IndexError: #if there are no bids, the highest bid is the initial value
+                    highest_bid = match.value
+                listings_with_bid.append((match, highest_bid))
             return render(request, "auctions/search_listing.html", {
                 "form": searchListingForm(),
-                "matching_listings": matching_listings,
-                "test": test,
+                "matches": listings_with_bid,
             })
 
     return render(request, "auctions/search_listing.html", {
@@ -127,8 +150,14 @@ def search_listing(request):
 @login_required
 def bid(request, listing_title):
     listing = AuctionListing.objects.get(title=listing_title)
+    try:
+        highest_bid = Bid.objects.filter(listing=listing) #gets all bids for the listing
+        highest_bid = highest_bid.order_by('bid')[0].bid #order them from highest bid to lowest and fetches the first one (highest)
+    except IndexError: #if there are no bids, it will throw an index error
+        highest_bid = listing.value
     form = bidForm()
     is_post = False
+
     if request.method == "POST":
         is_post = True
         form = bidForm(request.POST)
@@ -140,19 +169,25 @@ def bid(request, listing_title):
                 current_bid = AuctionListing.objects.get(user=listing_user).value
             else:
                 current_bid = current_bid.bid
-            if (new_bid > current_bid):
-                bid_to_save = Bid(user=request.user.username, listing=listing, bid=new_bid)
-                    # bid_to_save.save()
-                    # return HttpResponseRedirect(reverse("listing", kwargs={"listing_title": listing_title}))
-            return render(request, "auctions/bid.html", {
-                "is_post": is_post,
-                "form": form,
-                "listing": listing,
-                "current_bid": current_bid,
-                "listing_user": listing_user,
-            })
-    return render(request, "auctions/bid.html", {
-        "form": form,
-        "listing": listing,
-        "is_post": is_post,
-    })
+            if new_bid <= current_bid:
+                bid_message = "Your bid must be greater than the current highest bid"
+                return render(request, "auctions/bid.html", {
+                    "is_post": is_post,
+                    "form": form,
+                    "listing": listing,
+                    "current_bid": current_bid,
+                    "listing_user": listing_user,
+                    "error_message": bid_message,
+                    "test": "test",
+                })
+            else:
+                bid_to_save = Bid(user=request.user, listing=listing, bid=new_bid)
+                bid_to_save.save()
+            return HttpResponseRedirect(reverse("listing", kwargs={"listing_title": listing_title}))
+    else:        
+        return render(request, "auctions/bid.html", {
+            "form": form,
+            "listing": listing,
+            "is_post": is_post,
+            "highest_bid": highest_bid,
+        })
