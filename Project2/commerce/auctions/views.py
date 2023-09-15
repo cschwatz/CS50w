@@ -24,6 +24,9 @@ class searchListingForm(forms.Form):
 class bidForm(forms.Form):
     value = forms.DecimalField(widget=forms.NumberInput(attrs={'label': 'Bid'}), min_value=0)
 
+class commentForm(forms.Form):
+    comment = forms.CharField(widget=forms.Textarea())
+
 
 def index(request):
     all_auctions = AuctionListing.objects.all() # get all active auctions (still have to work on the "active" aspect)
@@ -92,7 +95,9 @@ def register(request):
 
 
 def listing(request, listing_title):
+    form = commentForm()
     listing_to_view = AuctionListing.objects.get(title=listing_title)
+    listing_comments = Comment.objects.filter(listing=listing_to_view)
     try:
         bids = Bid.objects.filter(listing=listing_to_view) #gets all bids for the listing
         sorted_bids = bids.order_by('-bid')[0] #order them from highest bid to lowest and fetches the first one (highest)
@@ -109,8 +114,23 @@ def listing(request, listing_title):
         user_can_close_listing = True
 
     if request.method == "POST":
-        listing_to_view.is_active = False #if the close button was pressed in the page, the listing becomes inactive
-        listing_to_view.save() #updates the query in the DB
+        if request.POST['post_form'] == "close": #if close button was pressed
+            listing_to_view.is_active = False #if the close button was pressed in the page, the listing becomes inactive
+            listing_to_view.save() #updates the query in the DB
+        elif request.POST['post_form'] == "comment": #if user made a comment
+            form = commentForm(request.POST)
+            if form.is_valid():
+                comment = form.cleaned_data['comment'] 
+                comment_to_save = Comment(user=request.user, listing=listing_to_view, comment=comment) 
+                comment_to_save.save() 
+                return render(request, "auctions/listing.html", {
+                    "listing_to_view": listing_to_view,
+                    "highest_bid": highest_bid,
+                    "can_bid": user_can_bid,
+                    "can_close": user_can_close_listing,
+                    "highest_bidder": highest_bidder,
+                    "comments": listing_comments,
+                })
 
         return render(request, "auctions/listing.html", {
             "listing_to_view": listing_to_view,
@@ -118,6 +138,7 @@ def listing(request, listing_title):
             "can_bid": user_can_bid,
             "can_close": user_can_close_listing,
             "highest_bidder": highest_bidder,
+            "comments": listing_comments,
         })
     
     else:
@@ -126,6 +147,8 @@ def listing(request, listing_title):
             "highest_bid": highest_bid,
             "can_bid": user_can_bid,
             "can_close": user_can_close_listing,
+            "form": form,
+            "comments": listing_comments,
         })
 
 @login_required

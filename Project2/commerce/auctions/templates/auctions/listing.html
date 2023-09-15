@@ -12,6 +12,7 @@
             {% if listing_to_view.is_active %}
                 <form action="{% url 'listing' listing_to_view.title %}" method="post">
                     {% csrf_token %}
+                    <input type="hidden" name="post_form" value="close">
                     <button>Close listing</button>
                 </form>
             {% endif %}
@@ -25,4 +26,17 @@
             and the user: {{ highest_bidder }} won the auction with a bid of: {{ highest_bid }}
         </p>
     {% endif %}
+    <p>
+        Comments:
+    </p>
+    {% for comment in comments %}
+        {{ comment.user }}: {{ comment.comment }}
+        <br>
+    {% endfor %}
+    <form action="{% url 'listing' listing_to_view.title %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="hidden" name="post_form" value="comment">
+        <button>Leave a comment</button>
+    </form>
 {% endblock %}
