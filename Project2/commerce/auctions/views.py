@@ -26,8 +26,9 @@ class bidForm(forms.Form):
 
 
 def index(request):
-    active_auctions = AuctionListing.objects.all() # get all active auctions (still have to work on the "active" aspect)
-    listings_with_bid = [] # list of tuples that have a listing and their respective highest bid
+    all_auctions = AuctionListing.objects.all() # get all active auctions (still have to work on the "active" aspect)
+    active_auctions = [listing for listing in all_auctions if listing.is_active]
+    listings_with_bid = [] #buffer to store listing+listing's highest bid (tuple)
     for listing in active_auctions:
         try: # see if there are bids for a given listing
             highest_bid = Bid.objects.filter(listing=listing)
@@ -93,22 +94,39 @@ def register(request):
 def listing(request, listing_title):
     listing_to_view = AuctionListing.objects.get(title=listing_title)
     try:
-        highest_bid = Bid.objects.filter(listing=listing_to_view) #gets all bids for the listing
-        highest_bid = highest_bid.order_by('-bid')[0].bid #order them from highest bid to lowest and fetches the first one (highest)
+        bids = Bid.objects.filter(listing=listing_to_view) #gets all bids for the listing
+        sorted_bids = bids.order_by('-bid')[0] #order them from highest bid to lowest and fetches the first one (highest)
+        highest_bid = sorted_bids.bid #fetches the highest bid's value
+        highest_bidder = sorted_bids.user #fetches the highest bid's user
     except IndexError: #if there are no bids, it will throw an index error
         highest_bid = listing_to_view.value
+        highest_bidder = listing_to_view.user
     user_can_bid = False
     user_can_close_listing = False
     if (listing_to_view.user.username != request.user.username): # check if logged user is not the user who created the current listing, since they shouldn't bid on their own listing
         user_can_bid = True
     else:
         user_can_close_listing = True
-    return render(request, "auctions/listing.html", {
-        "listing_to_view": listing_to_view,
-        "highest_bid": highest_bid,
-        "can_bid": user_can_bid,
-        "can_close": user_can_close_listing,
-    })
+
+    if request.method == "POST":
+        listing_to_view.is_active = False #if the close button was pressed in the page, the listing becomes inactive
+        listing_to_view.save() #updates the query in the DB
+
+        return render(request, "auctions/listing.html", {
+            "listing_to_view": listing_to_view,
+            "highest_bid": highest_bid,
+            "can_bid": user_can_bid,
+            "can_close": user_can_close_listing,
+            "highest_bidder": highest_bidder,
+        })
+    
+    else:
+        return render(request, "auctions/listing.html", {
+            "listing_to_view": listing_to_view,
+            "highest_bid": highest_bid,
+            "can_bid": user_can_bid,
+            "can_close": user_can_close_listing,
+        })
 
 @login_required
 def create_listing(request):
@@ -136,10 +154,11 @@ def search_listing(request):
     if request.method == "POST":
         form = searchListingForm(request.POST)
         if form.is_valid():
-            test = form.cleaned_data['category_to_search']
             matching_listings = AuctionListing.objects.filter(category=form.cleaned_data['category_to_search'])
+            active_matching = [listing for listing in matching_listings if listing.is_active]
             listings_with_bid = []
-            for match in matching_listings:
+            
+            for match in active_matching:
                 try: # see if there are bids for a given listing
                     highest_bid = Bid.objects.filter(listing=match)
                     highest_bid = highest_bid.order_by('-bid')[0].bid

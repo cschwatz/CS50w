@@ -13,7 +13,7 @@
     {{ match.0.category }} 
     {{ match.0.date }}
     {{ match.1 }}
-    <a href="{% url 'bid' match.0.title %}">Make a bid</a>
+    <a href="{% url 'listing' match.0.title %}">Check listing</a>
     <hr>
     <br>
     {% endfor %}

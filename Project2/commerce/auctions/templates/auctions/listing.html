@@ -10,11 +10,19 @@
     {% if user.is_authenticated %}
         {% if can_close %}
             {% if listing_to_view.is_active %}
-                <button>Close listing</button>
+                <form action="{% url 'listing' listing_to_view.title %}" method="post">
+                    {% csrf_token %}
+                    <button>Close listing</button>
+                </form>
             {% endif %}
         {% endif %}
         {% if can_bid %}
             <a href="{% url 'bid' listing_to_view.title %}">Make a bid</a>
         {% endif %}
+    {% endif %}
+    {% if not listing_to_view.is_active %}
+        <p>The current listing was closed by {{ listing_to_view.user }}, 
+            and the user: {{ highest_bidder }} won the auction with a bid of: {{ highest_bid }}
+        </p>
     {% endif %}
 {% endblock %}
