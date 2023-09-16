@@ -1,0 +1,13 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+    <h3>Watchlist:</h3>
+    {% for listing in watchlist %}
+        {{ listing.title }} 
+        {{ listing.description }} 
+        <img class="auction_image" src="{{ listing.image }}" alt=""> 
+        {{ listing.category }} 
+        {{ listing.date }}
+        <a href="{% url 'listing' listing.title  %}">Go to listing</a>
+        
+    {% endfor %}
+{% endblock %}

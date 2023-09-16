@@ -1,5 +1,6 @@
 {% extends "auctions/layout.html" %}
 {% block body %}
+    <h3>{{ test }}</h3>
     <h3>listing</h3>
     {{ listing_to_view.title }}
     {{ listing_to_view.description }}
@@ -14,6 +15,15 @@
                     {% csrf_token %}
                     <input type="hidden" name="post_form" value="close">
                     <button>Close listing</button>
+                </form>
+            {% endif %}
+        {% endif %}
+        {% if can_watchlist %}    
+            {% if not is_watched %}
+                <form action="{% url 'listing' listing_to_view.title %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="post_form" value="watchlist">
+                    <button>Add to watchlist</button>
                 </form>
             {% endif %}
         {% endif %}

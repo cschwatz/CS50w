@@ -8,7 +8,6 @@ class AuctionListing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_listing", default=None)
     title = models.CharField(max_length=64)
     description = models.CharField(max_length=150)
-    # category choices
     category_choices = [('Electronic', 'electronic'), ('Toys', 'toys'), ('Home', 'home'), ('Fashion', 'fashion'), ('Other', 'other')]
     category = models.CharField(max_length=10, choices=category_choices, default='Other')
     date = models.DateTimeField(auto_now_add=True)
@@ -25,4 +24,9 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_comment", default=None)
     listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE, related_name="listing_comments")
     comment = models.CharField(max_length=150)
+
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_wishlist", default=None)
+    listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE, related_name="listing_wishlist")
+    is_watchlisted = models.BooleanField(default=False)
 

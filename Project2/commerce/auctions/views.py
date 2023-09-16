@@ -7,7 +7,7 @@ from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django import forms
 
-from .models import User, AuctionListing, Bid, Comment
+from .models import User, AuctionListing, Bid, Comment, Watchlist
 
 class newListingForm(forms.Form):
     listing_name = forms.CharField(widget=forms.TextInput(attrs={'label': 'Listing name', 'initial':'Listing name'}))
@@ -26,7 +26,6 @@ class bidForm(forms.Form):
 
 class commentForm(forms.Form):
     comment = forms.CharField(widget=forms.Textarea())
-
 
 def index(request):
     all_auctions = AuctionListing.objects.all() # get all active auctions (still have to work on the "active" aspect)
@@ -98,6 +97,14 @@ def listing(request, listing_title):
     form = commentForm()
     listing_to_view = AuctionListing.objects.get(title=listing_title)
     listing_comments = Comment.objects.filter(listing=listing_to_view)
+    if (listing_to_view.user.username != request.user.username): #check if authenticated user is not the same of the listing, otherwise it doesn't make sense to be able to watchlist
+        can_watchlist = True
+    else:
+        can_watchlist = False
+    if (Watchlist.objects.filter(user=request.user, listing=listing_to_view)): #check if listing is already in watchlist
+        is_watched = True
+    else:
+        is_watched = False
     try:
         bids = Bid.objects.filter(listing=listing_to_view) #gets all bids for the listing
         sorted_bids = bids.order_by('-bid')[0] #order them from highest bid to lowest and fetches the first one (highest)
@@ -130,7 +137,24 @@ def listing(request, listing_title):
                     "can_close": user_can_close_listing,
                     "highest_bidder": highest_bidder,
                     "comments": listing_comments,
+                    "can_watchlist": can_watchlist,
+                    "is_watched": is_watched,
                 })
+        elif request.POST['post_form'] == "watchlist":
+            is_watched = True
+            listing_to_watch = Watchlist(user=request.user, listing=listing_to_view)
+            listing_to_watch.save()
+            
+            return render(request, "auctions/listing.html", {
+                "listing_to_view": listing_to_view,
+                "highest_bid": highest_bid,
+                "can_bid": user_can_bid,
+                "can_close": user_can_close_listing,
+                "highest_bidder": highest_bidder,
+                "comments": listing_comments,
+                "can_watchlist": can_watchlist,
+                "is_watched": is_watched,
+            })
 
         return render(request, "auctions/listing.html", {
             "listing_to_view": listing_to_view,
@@ -139,6 +163,8 @@ def listing(request, listing_title):
             "can_close": user_can_close_listing,
             "highest_bidder": highest_bidder,
             "comments": listing_comments,
+            "can_watchlist": can_watchlist,
+            "is_watched": is_watched,
         })
     
     else:
@@ -149,6 +175,8 @@ def listing(request, listing_title):
             "can_close": user_can_close_listing,
             "form": form,
             "comments": listing_comments,
+            "can_watchlist": can_watchlist,
+            "is_watched": is_watched,
         })
 
 @login_required
@@ -232,3 +260,12 @@ def bid(request, listing_title):
             "listing": listing,
             "highest_bid": highest_bid,
         })
+    
+def watchlist(request):
+    all_listings = AuctionListing.objects.exclude(user=request.user)
+    user_watchlist = Watchlist.objects.filter(user=request.user)
+    listings_being_watched = [listing.listing for listing in user_watchlist]
+    return render(request, "auctions/watchlist.html", {
+        "watchlist": listings_being_watched,
+        "all_listings": all_listings,
+    })
