@@ -13,12 +13,12 @@ class newListingForm(forms.Form):
     listing_name = forms.CharField(widget=forms.TextInput(attrs={'label': 'Listing name', 'initial':'Listing name'}))
     image_url = forms.CharField(widget=forms.TextInput(attrs={'label': 'Image URL'}))
     description = forms.CharField(widget=forms.Textarea(attrs={'label': 'Description'}))
-    choices = [('EL', 'electronic'), ('TO', 'toys'), ('HM', 'home'), ('FS', 'fashion'), ('OT', 'other')]
+    choices = [('Electronic', 'electronic'), ('Toys', 'toys'), ('Home', 'home'), ('Fashion', 'fashion'), ('Other', 'other')]
     category = forms.ChoiceField(choices=choices)
     initial_price = forms.DecimalField(widget=forms.NumberInput())
 
 class searchListingForm(forms.Form):
-    choices = [('EL', 'electronic'), ('TO', 'toys'), ('HM', 'home'), ('FS', 'fashion'), ('OT', 'other')]
+    choices = [('Electronic', 'electronic'), ('Toys', 'toys'), ('Home', 'home'), ('Fashion', 'fashion'), ('Other', 'other')]
     category_to_search = forms.ChoiceField(choices=choices)
 
 class bidForm(forms.Form):
