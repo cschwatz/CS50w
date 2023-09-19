@@ -26,7 +26,7 @@
                 <span id="description">
                     Current price: 
                 </span>
-                $ {{ highest_bid }}
+                $ {{ highest_bid }} by {{ highest_bidder }}
             </div>
             <br>
             <div id="content_date">
@@ -68,12 +68,21 @@
         
     </div>
     {% if not listing_to_view.is_active %}
-        <div id="winner_message">
-            <h4>
-                The current listing was closed by <span id="winner">{{ listing_to_view.user }}</span>, and the user: <span id="winner">{{ highest_bidder }}</span> won the auction with a bid of: <span id="winner">$ {{ highest_bid }}</span>
-            </h4>
-        </div>
+        {% if is_winner %}
+            <div id="winner_message">
+                <h4>
+                    Congratulations <span id="winner">{{ highest_bidder }}</span>, you won this auction with a bid of: <span id="winner">$ {{ highest_bid }}</span>
+                </h4>
+            </div>
+        {% else %}
+            <div id="winner_message">
+                <h4>
+                    The current listing was closed by <span id="winner">{{ listing_to_view.user }}</span>, and the user: <span id="winner">{{ highest_bidder }}</span> won the auction with a bid of: <span id="winner">$ {{ highest_bid }}</span>
+                </h4>
+            </div>
+        {% endif %}
     {% endif %}
+    
     <div class="comment_section">
         <div id="comment_list">
         <h3>Comments: </h3>

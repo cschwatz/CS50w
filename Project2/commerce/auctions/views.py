@@ -102,7 +102,7 @@ def listing(request, listing_title):
     form = commentForm()
     listing_to_view = AuctionListing.objects.get(title=listing_title)
     listing_comments = Comment.objects.filter(listing=listing_to_view)
-    is_closed = False
+    is_closed = not listing_to_view.is_active
     if (listing_to_view.user.username != request.user.username): #check if authenticated user is not the same of the listing, otherwise it doesn't make sense to be able to watchlist
         can_watchlist = True
     else:
@@ -125,7 +125,7 @@ def listing(request, listing_title):
         user_can_bid = True
     else:
         user_can_close_listing = True
-
+    is_winner = (highest_bidder.username == request.user.username) and (is_closed) #checks if listing has been closed and the user seeing is the winner of the auction
     if request.method == "POST":
         if request.POST['post_form'] == "close": #if close button was pressed
             listing_to_view.is_active = False #if the close button was pressed in the page, the listing becomes inactive
@@ -146,6 +146,7 @@ def listing(request, listing_title):
                     "comments": listing_comments,
                     "can_watchlist": can_watchlist,
                     "is_watched": is_watched,
+                    "is_winner": is_winner,
                 })
         elif request.POST['post_form'] == "watchlist":
             is_watched = True
@@ -164,12 +165,14 @@ def listing(request, listing_title):
             "can_watchlist": can_watchlist,
             "is_watched": is_watched,
             "is_closed": is_closed,
+            "is_winner": is_winner,
         })
     
     else:
         return render(request, "auctions/listing.html", {
             "listing_to_view": listing_to_view,
             "highest_bid": highest_bid,
+            "highest_bidder": highest_bidder,
             "can_bid": user_can_bid,
             "can_close": user_can_close_listing,
             "form": form,
@@ -177,6 +180,7 @@ def listing(request, listing_title):
             "can_watchlist": can_watchlist,
             "is_watched": is_watched,
             "is_closed": is_closed,
+            "is_winner": is_winner,
         })
 
 @login_required
