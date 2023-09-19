@@ -11,7 +11,7 @@ from .models import User, AuctionListing, Bid, Comment, Watchlist
 
 class newListingForm(forms.Form):
     listing_name = forms.CharField(widget=forms.TextInput(attrs={'label': 'Listing name', 'initial':'Listing name'}))
-    image_url = forms.CharField(widget=forms.TextInput(attrs={'label': 'Image URL'}))
+    image_url = forms.CharField(widget=forms.TextInput(attrs={'label': 'Image URL'}), required=False)
     description = forms.CharField(widget=forms.Textarea(attrs={'label': 'Description', 'rows':3, 'cols':30}))
     choices = [('Electronic', 'electronic'), ('Toys', 'toys'), ('Home', 'home'), ('Fashion', 'fashion'), ('Other', 'other')]
     category = forms.ChoiceField(choices=choices)
@@ -234,9 +234,10 @@ def bid(request, listing_title):
     listing = AuctionListing.objects.get(title=listing_title)
     try:
         highest_bid = Bid.objects.filter(listing=listing) #gets all bids for the listing
-        highest_bid = highest_bid.order_by('bid')[0].bid #order them from highest bid to lowest and fetches the first one (highest)
+        highest_bid = highest_bid.order_by('-bid')[0].bid #order them from highest bid to lowest and fetches the first one (highest)
     except IndexError: #if there are no bids, it will throw an index error
         highest_bid = listing.value
+        
     form = bidForm()
 
     if request.method == "POST":

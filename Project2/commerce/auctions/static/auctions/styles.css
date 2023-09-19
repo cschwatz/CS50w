@@ -78,6 +78,11 @@ body {
     color: rgb(117, 115, 115);
 }
 
+#product_description {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 #description {
     font-weight: bold;
 }

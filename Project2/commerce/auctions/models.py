@@ -11,7 +11,7 @@ class AuctionListing(models.Model):
     category_choices = [('Electronic', 'electronic'), ('Toys', 'toys'), ('Home', 'home'), ('Fashion', 'fashion'), ('Other', 'other')]
     category = models.CharField(max_length=10, choices=category_choices, default='Other')
     date = models.DateTimeField(auto_now_add=True)
-    image = models.URLField()
+    image = models.URLField(blank=True)
     value = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     is_active = models.BooleanField(default=True)
 
