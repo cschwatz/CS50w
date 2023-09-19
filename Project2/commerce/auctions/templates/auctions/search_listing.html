@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <form action="search_listing" method="post">
+    <form id="search_form" action="search_listing" method="post">
         {% csrf_token %}
         {{ form }}
         <button id="button">Search</button>
@@ -35,6 +35,7 @@
                 $ {{ match.1 }}
             </div>
             <div id="content_date">
+                <br>
                 Listing created by {{ match.0.user }} in {{ match.0.date }}
              </div>            
         </div>

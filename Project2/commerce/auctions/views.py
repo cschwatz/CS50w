@@ -263,7 +263,6 @@ def bid(request, listing_title):
         })
     
 def watchlist(request):
-    all_listings = AuctionListing.objects.exclude(user=request.user)
     user_watchlist = Watchlist.objects.filter(user=request.user)
     listings_being_watched = [listing.listing for listing in user_watchlist]
     listings_with_bid = []
@@ -274,6 +273,16 @@ def watchlist(request):
         except IndexError: #if there are no bids, the highest bid is the initial value
             highest_bid = match.value
         listings_with_bid.append((match, highest_bid))
-    return render(request, "auctions/watchlist.html", {
-        "listings_with_bid": listings_with_bid, 
-    })
+
+    if request.method == "POST":
+        listing_title_to_unwatch = request.POST['unwatch']
+        listing_to_unwatch = AuctionListing.objects.get(title=listing_title_to_unwatch)
+        listing_to_delete = Watchlist.objects.get(listing=listing_to_unwatch)
+        listing_to_delete.delete()
+
+        return HttpResponseRedirect(reverse("watchlist"))
+    
+    else:        
+        return render(request, "auctions/watchlist.html", {
+            "listings_with_bid": listings_with_bid, 
+        })

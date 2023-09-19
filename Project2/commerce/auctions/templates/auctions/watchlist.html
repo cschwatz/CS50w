@@ -34,6 +34,13 @@
                Listing created by {{ listing.0.user }} in {{ listing.0.date }}
             </div>
         </div>
+        <div>
+            <form action="{% url 'watchlist' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="unwatch" value="{{ listing.0.title }}">
+                <button id="button">Unwatch listing</button>
+            </form>
+        </div>
         <div id="listing_url">
             <a href="{% url 'listing' listing.0.title  %}">
                 <button id="button">Go to listing</button>
