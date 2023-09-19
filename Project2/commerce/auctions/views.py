@@ -12,7 +12,7 @@ from .models import User, AuctionListing, Bid, Comment, Watchlist
 class newListingForm(forms.Form):
     listing_name = forms.CharField(widget=forms.TextInput(attrs={'label': 'Listing name', 'initial':'Listing name'}))
     image_url = forms.CharField(widget=forms.TextInput(attrs={'label': 'Image URL'}))
-    description = forms.CharField(widget=forms.Textarea(attrs={'label': 'Description'}))
+    description = forms.CharField(widget=forms.Textarea(attrs={'label': 'Description', 'rows':3, 'cols':30}))
     choices = [('Electronic', 'electronic'), ('Toys', 'toys'), ('Home', 'home'), ('Fashion', 'fashion'), ('Other', 'other')]
     category = forms.ChoiceField(choices=choices)
     initial_price = forms.DecimalField(widget=forms.NumberInput())

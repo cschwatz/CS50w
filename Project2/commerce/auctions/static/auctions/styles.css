@@ -52,6 +52,18 @@ body {
     justify-content: space-evenly;
 }
 
+.create_listing_content form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    
+}
+
+.create_listing_content form :nth-child(n+8) {
+    align-self: center;
+    width: 200px;
+}
+
 #make_comment form {
     display: flex;
     gap: 5px;
