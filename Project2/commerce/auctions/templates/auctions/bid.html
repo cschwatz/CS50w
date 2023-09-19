@@ -1,16 +1,47 @@
 {% extends "auctions/layout.html" %}
 {% block body %}
-    {{ listing.user }}
-    {{ listing.title }}
-    {{ listing.description }}
-    {{ listing.category }}
-    <img class="auction_image" src="{{ listing.image }}" alt=""> 
-    {{ listing.date }} 
-    {{ highest_bid }}
-    <form action="{% url 'bid' listing.title %}" method="post">
-        {% csrf_token %}
-        {{ form }}
-        <button>Bid!</button>
-    </form>
-    {{ error_message }}
+    <h2>Make a bid:</h2>
+    <div class="listing_full">
+        <div class="listing_image">
+            <img class="auction_image" src="{{ listing.image }}" alt=""> 
+        </div>
+        <div class="listing_content">
+            <h4>
+                Listing information:
+            </h4>
+            <br>
+            <div id="content_title">
+                <span id="description">
+                   Product: 
+                </span> 
+                {{ listing.title }}
+            </div>
+            <div id="content_description">
+                <span id="description">
+                    Description:
+                </span>
+                {{ listing.description }}
+            </div>
+            <div id="content_price">
+                <span id="description">
+                    Current price: 
+                </span>
+                $ {{ highest_bid }}
+            </div>
+            <br>
+            <div id="content_date">
+               Listing created by {{ listing.user }} in {{ listing.date }}
+            </div>
+        </div>
+        <form action="{% url 'bid' listing.title %}" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <button id="button">BID!</button>
+        </form>
+    </div>
+    <div id="bid_error_message">
+        <h4>
+            {{ error_message }} $ {{ highest_bid }}
+        </h4>
+    </div>
 {% endblock %}

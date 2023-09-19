@@ -25,7 +25,12 @@ class bidForm(forms.Form):
     value = forms.DecimalField(widget=forms.NumberInput(attrs={'label': 'Bid'}), min_value=0)
 
 class commentForm(forms.Form):
-    comment = forms.CharField(widget=forms.Textarea())
+    def __init__(self, *args, **kwargs): # removing the label from this form
+        super().__init__(*args, **kwargs)
+        for key, field in self.fields.items():
+            field.label = ""
+
+    comment = forms.CharField(widget=forms.Textarea(attrs={'rows':3, 'cols':30}))
 
 def index(request):
     all_auctions = AuctionListing.objects.all() # get all active auctions (still have to work on the "active" aspect)
@@ -97,6 +102,7 @@ def listing(request, listing_title):
     form = commentForm()
     listing_to_view = AuctionListing.objects.get(title=listing_title)
     listing_comments = Comment.objects.filter(listing=listing_to_view)
+    is_closed = False
     if (listing_to_view.user.username != request.user.username): #check if authenticated user is not the same of the listing, otherwise it doesn't make sense to be able to watchlist
         can_watchlist = True
     else:
@@ -124,6 +130,7 @@ def listing(request, listing_title):
         if request.POST['post_form'] == "close": #if close button was pressed
             listing_to_view.is_active = False #if the close button was pressed in the page, the listing becomes inactive
             listing_to_view.save() #updates the query in the DB
+            is_closed = True
         elif request.POST['post_form'] == "comment": #if user made a comment
             form = commentForm(request.POST)
             if form.is_valid():
@@ -145,16 +152,7 @@ def listing(request, listing_title):
             listing_to_watch = Watchlist(user=request.user, listing=listing_to_view)
             listing_to_watch.save()
             
-            return render(request, "auctions/listing.html", {
-                "listing_to_view": listing_to_view,
-                "highest_bid": highest_bid,
-                "can_bid": user_can_bid,
-                "can_close": user_can_close_listing,
-                "highest_bidder": highest_bidder,
-                "comments": listing_comments,
-                "can_watchlist": can_watchlist,
-                "is_watched": is_watched,
-            })
+            return HttpResponseRedirect(reverse("listing", kwargs={"listing_title": listing_title}))
 
         return render(request, "auctions/listing.html", {
             "listing_to_view": listing_to_view,
@@ -165,6 +163,7 @@ def listing(request, listing_title):
             "comments": listing_comments,
             "can_watchlist": can_watchlist,
             "is_watched": is_watched,
+            "is_closed": is_closed,
         })
     
     else:
@@ -177,6 +176,7 @@ def listing(request, listing_title):
             "comments": listing_comments,
             "can_watchlist": can_watchlist,
             "is_watched": is_watched,
+            "is_closed": is_closed,
         })
 
 @login_required
@@ -249,6 +249,7 @@ def bid(request, listing_title):
                     "current_bid": current_bid,
                     "listing_user": listing_user,
                     "error_message": bid_message,
+                    "highest_bid": highest_bid,
                 })
             else:
                 bid_to_save = Bid(user=request.user, listing=listing, bid=new_bid)
@@ -265,7 +266,14 @@ def watchlist(request):
     all_listings = AuctionListing.objects.exclude(user=request.user)
     user_watchlist = Watchlist.objects.filter(user=request.user)
     listings_being_watched = [listing.listing for listing in user_watchlist]
+    listings_with_bid = []
+    for match in listings_being_watched:
+        try: # see if there are bids for a given listing
+            highest_bid = Bid.objects.filter(listing=match)
+            highest_bid = highest_bid.order_by('-bid')[0].bid
+        except IndexError: #if there are no bids, the highest bid is the initial value
+            highest_bid = match.value
+        listings_with_bid.append((match, highest_bid))
     return render(request, "auctions/watchlist.html", {
-        "watchlist": listings_being_watched,
-        "all_listings": all_listings,
+        "listings_with_bid": listings_with_bid, 
     })

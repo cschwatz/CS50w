@@ -1,52 +1,102 @@
 {% extends "auctions/layout.html" %}
 {% block body %}
-    <h3>{{ test }}</h3>
-    <h3>listing</h3>
-    {{ listing_to_view.title }}
-    {{ listing_to_view.description }}
-    {{ listing_to_view.category }}
-    <img class="auction_image" src="{{ listing_to_view.image }}" alt=""> 
-    {{ listing_to_view.date }} 
-    {{ highest_bid }}
-    {% if user.is_authenticated %}
-        {% if can_close %}
-            {% if listing_to_view.is_active %}
-                <form action="{% url 'listing' listing_to_view.title %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="post_form" value="close">
-                    <button>Close listing</button>
-                </form>
+    <h3>Listing:</h3>
+    <div class="listing_full">
+        <div class="listing_image">
+            <img class="auction_image" src="{{ listing_to_view.image }}" alt="">  
+        </div>
+        <div class="listing_content">
+            <h4>
+                Listing information:
+            </h4>
+            <br>
+            <div id="content_title">
+                <span id="description">
+                   Product: 
+                </span> 
+                {{ listing_to_view.title }} 
+            </div>
+            <div id="content_description">
+                <span id="description">
+                    Description:
+                </span>
+                {{ listing_to_view.description }} 
+            </div>
+            <div id="content_price">
+                <span id="description">
+                    Current price: 
+                </span>
+                $ {{ highest_bid }}
+            </div>
+            <br>
+            <div id="content_date">
+               Listing created by {{ listing_to_view.user }} in {{ listing_to_view.date }} 
+            </div>
+        </div>
+        {% if user.is_authenticated %}
+            {% if can_close %}
+                {% if listing_to_view.is_active %}
+                    <form action="{% url 'listing' listing_to_view.title %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="post_form" value="close">
+                        <button id="button">Close listing</button>
+                    </form>
+                {% endif %}
+                {% if is_closed %}
+                    <div>
+                        <span>This auction was closed</span>
+                    </div>
+                {% endif %}
             {% endif %}
+            <div id="double_button">
+                {% if can_watchlist %}    
+                    {% if not is_watched %}
+                        <form action="{% url 'listing' listing_to_view.title %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="post_form" value="watchlist">
+                            <button id="button">Add to watchlist</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+                {% if can_bid %}
+                    <a href="{% url 'bid' listing_to_view.title %}">
+                        <button id="button">Make a bid</button>
+                    </a>
+                {% endif %}
+            </div>
         {% endif %}
-        {% if can_watchlist %}    
-            {% if not is_watched %}
-                <form action="{% url 'listing' listing_to_view.title %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="post_form" value="watchlist">
-                    <button>Add to watchlist</button>
-                </form>
-            {% endif %}
-        {% endif %}
-        {% if can_bid %}
-            <a href="{% url 'bid' listing_to_view.title %}">Make a bid</a>
-        {% endif %}
-    {% endif %}
+        
+    </div>
     {% if not listing_to_view.is_active %}
-        <p>The current listing was closed by {{ listing_to_view.user }}, 
-            and the user: {{ highest_bidder }} won the auction with a bid of: {{ highest_bid }}
-        </p>
+        <div id="winner_message">
+            <h4>
+                The current listing was closed by <span id="winner">{{ listing_to_view.user }}</span>, and the user: <span id="winner">{{ highest_bidder }}</span> won the auction with a bid of: <span id="winner">$ {{ highest_bid }}</span>
+            </h4>
+        </div>
     {% endif %}
-    <p>
-        Comments:
-    </p>
-    {% for comment in comments %}
-        {{ comment.user }}: {{ comment.comment }}
-        <br>
-    {% endfor %}
-    <form action="{% url 'listing' listing_to_view.title %}" method="post">
-        {% csrf_token %}
-        {{ form }}
-        <input type="hidden" name="post_form" value="comment">
-        <button>Leave a comment</button>
-    </form>
+    <div class="comment_section">
+        <div id="comment_list">
+        <h3>Comments: </h3>
+        {% for comment in comments %}
+            <div id="comment">
+                <span id="user_comment">{{ comment.user }}</span>: {{ comment.comment }}
+                <br>
+            </div>
+        {% endfor %}
+        </div>
+        {% if not is_closed %}
+            <div id="make_comment">
+                <form action="{% url 'listing' listing_to_view.title %}" method="post">
+                    <div id="comment_form">
+                        {% csrf_token %}
+                        {{ form }}
+                        <input type="hidden" name="post_form" value="comment">
+                    </div>
+                    <div id="comment_button">
+                        <button id="button">Leave a comment</button>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

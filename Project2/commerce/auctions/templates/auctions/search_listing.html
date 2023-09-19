@@ -4,17 +4,45 @@
     <form action="search_listing" method="post">
         {% csrf_token %}
         {{ form }}
-        <button>Search</button>
+        <button id="button">Search</button>
     </form>
     {% for match in matches %}
-    {{ match.0.title }} 
-    {{ match.0.description }} 
-    <img class="auction_image" src="{{ match.0.image }}" alt=""> 
-    {{ match.0.category }} 
-    {{ match.0.date }}
-    {{ match.1 }}
-    <a href="{% url 'listing' match.0.title %}">Check listing</a>
-    <hr>
-    <br>
+    <div class="listing_full">
+        <div class="listing_image">
+            <img class="auction_image" src="{{ match.0.image }}" alt="">  
+        </div>
+        <div class="listing_content">
+            <h4>
+                Listing information:
+            </h4>
+            <br>
+            <div id="content_title">
+                <span id="description">
+                   Product: 
+                </span> 
+                {{ match.0.title }} 
+            </div>
+            <div id="content_description">
+                <span id="description">
+                    Description:
+                </span>
+                {{ match.0.description }} 
+            </div> 
+            <div id="content_price">
+                <span id="description">
+                    Current price: 
+                </span>
+                $ {{ match.1 }}
+            </div>
+            <div id="content_date">
+                Listing created by {{ match.0.user }} in {{ match.0.date }}
+             </div>            
+        </div>
+        <div id="listing_url">
+            <a href="{% url 'listing' match.0.title %}">
+                <button id="button">Check listing</button>
+            </a>   
+        </div>
+    </div>
     {% endfor %}
 {% endblock %}

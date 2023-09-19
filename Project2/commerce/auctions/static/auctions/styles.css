@@ -3,7 +3,7 @@ body {
 }
 
 .auction_image {
-    width: 100px;
+    width: 150px;
 }
 
 .underline {
@@ -12,4 +12,105 @@ body {
     border: solid;
     border-bottom: 1px;
     border-color: black;
+}
+
+.listing_image {
+    padding: 10px;
+    display: flex;
+}
+
+#listing_url {
+    text-decoration: none;
+    padding-right: 50px;
+}
+
+#listing_url a {
+    text-decoration: none;
+}
+
+.listing_content {
+    flex-direction: column;
+    align-self: center;
+}
+
+.listing_full {
+    padding: 10px;
+    display: flex;
+    gap: 5px;
+    border: 2px rgb(185, 182, 182) solid;
+    margin: 3px;
+    border-radius: 10px;
+    justify-content:space-between;
+    align-items: center;
+}
+
+.comment_section {
+    display: flex;
+    margin: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+#make_comment form {
+    display: flex;
+    gap: 5px;
+}
+
+#comment_list {
+    gap: 1px;
+}
+
+#content_date {
+    font-size: 14px;
+    color: rgb(117, 115, 115);
+}
+
+#description {
+    font-weight: bold;
+}
+
+#button {
+    border-radius: 6px;
+    background-color: white;
+    color: rgb(50, 140, 214);
+}
+
+#button:hover {
+    border-color: rgb(50, 140, 214);
+}
+
+#comment_button {
+    align-self: center;
+}
+
+#user_comment {
+    font-weight: bold;
+}
+
+#winner {
+    color: red;
+}
+
+#winner_message {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+#double_button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+#bid_error_message {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+#bid_error_message h4 {
+    color: red;
 }

@@ -3,14 +3,43 @@
 {% block body %}
     <h2>Active Listings</h2>
     {% for listing in listings %}
-        {{ listing.0.user }}
-        {{ listing.0.title }} 
-        {{ listing.0.description }} 
-        {{ listing.0.category }} 
-        {{ listing.0.date }}
-        {{ listing.1 }}
-        <img class="auction_image" src="{{ listing.0.image }}" alt=""> 
-        <a href="{% url 'listing' listing.0.title  %}">Go to listing</a>
-        <hr>
+    <div class="listing_full">
+        <div class="listing_image">
+            <img class="auction_image" src="{{ listing.0.image }}" alt=""> 
+        </div>
+        <div class="listing_content">
+            <h4>
+                Listing information:
+            </h4>
+            <br>
+            <div id="content_title">
+                <span id="description">
+                   Product: 
+                </span> 
+                {{ listing.0.title }} 
+            </div>
+            <div id="content_description">
+                <span id="description">
+                    Description:
+                </span>
+                {{ listing.0.description }} 
+            </div>
+            <div id="content_price">
+                <span id="description">
+                    Current price: 
+                </span>
+                $ {{ listing.1 }}
+            </div>
+            <br>
+            <div id="content_date">
+               Listing created by {{ listing.0.user }} in {{ listing.0.date }}
+            </div>
+        </div>
+        <div id="listing_url">
+            <a href="{% url 'listing' listing.0.title  %}">
+                <button id="button">Go to listing</button>
+            </a>    
+        </div>
+    </div>
     {% endfor %}
 {% endblock %}
