@@ -1,3 +1,21 @@
 textarea {
     min-height: 400px;
 }
+
+#allMails {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#mailDiv {
+    display: flex;
+    border: solid 1px;
+    padding: 5px;
+}
+
+#mailTime {
+    display: flex;
+    justify-items: right;
+    justify-items: right;
+}
