@@ -37,17 +37,30 @@ function compose_email() {
 }
 
 function load_mailbox(mailbox) {
-  // submit GET request to the Mail API
-  fetch(`/emails/${mailbox}`)
-  .then(response => response.json())
-  .then(data => {
-    console.log(data)
-  });
-
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+// submit GET request to the Mail API
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+    let responseData = data; // its an array of results
+    let unorderedList = document.createElement('ul');
+    responseData.forEach(element => {
+      let listItem = document.createElement('li');
+      listItem.innerHTML = [element['id'], 
+                            element['sender'], 
+                            element['subject'], 
+                            element['body'], 
+                            element['timestamp']];
+      unorderedList.appendChild(listItem); 
+    });
+    document.querySelector('#emails-view').append(unorderedList);
+  });
+  
 }
