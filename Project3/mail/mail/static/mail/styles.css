@@ -8,10 +8,14 @@ textarea {
     gap: 10px;
 }
 
-#mailDiv {
+.mailDiv {
     display: flex;
     border: solid 1px;
     padding: 5px;
+}
+
+.mailDiv:hover {
+    cursor: pointer;
 }
 
 #mailTime {
